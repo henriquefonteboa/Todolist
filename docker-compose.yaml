@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8088:80"
+    networks:
+      - todo-networks
+  mysql:
+    build: 
+      context: .
+      dockerfile: DockerfileMysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "Senha123"
+      MYSQL_DATABASE: "tasks"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      - todo-networks
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: "Senha123"
+      PMA_HOST: mysql
+    ports:
+      - "8089:80"
+    volumes:
+      - /data/php/admin/uploads.ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks:
+      - todo-networks
+networks:
+   todo-networks:
+     driver: bridge
